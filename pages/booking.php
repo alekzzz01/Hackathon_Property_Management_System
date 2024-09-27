@@ -1,16 +1,6 @@
 <?php
 require '../session/db.php'; // Include your database connection file
 
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    // Redirect the user to the login page or another page as needed
-    header("Location: ../authentication/login.php");
-    exit();
-}
-
-$admin_id = $_SESSION['user_id'];
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve data from the form
     $unitNo = $_POST['unitNo'];
@@ -19,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $contact = $_POST['contact'];
     $paidAmount = floatval($_POST['paidAmount']);
-
+    $adminID = $_POST['adminID'];
 
     // Calculate amount payable
     $pricePerHour = 0; // Initialize to hold hourly rate
@@ -49,23 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $insertStmt = $connection->prepare($insertSql);
-    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $admin_id);
+    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $adminID);
 
     if ($insertStmt->execute()) {
-        $updateSql = "UPDATE roomunittable SET is_Booked = 1 WHERE UnitNo = ?";
-        $updateStmt = $connection->prepare($updateSql);
-        $updateStmt->bind_param("s", $unitNo);
-
-        if ($updateStmt->execute()) {
-            // Booking and update successful
-            header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
-            exit();
-        } else {
-            // Update failed, you may want to log or handle this error
-            $error = "Update Error: " . $updateStmt->error;
-        }
-
-        $updateStmt->close();
+        // Booking successful
+        header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
+        exit();
     } else {
         // Booking failed
         $error = "Error: " . $insertStmt->error;
@@ -110,26 +89,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="w-full">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-7">
                     <?php
+                   require '../session/db.php';
+
                     if ($connection->connect_error) {
                         die("Connection failed: " . $connection->connect_error);
                     }
 
-                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Image_Urls,  bookingtable.AdminIdNo 
+                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, bookingtable.AdminIdNo 
                     FROM roomunittable 
                     LEFT JOIN bookingtable ON roomunittable.UnitNo = bookingtable.UnitNo";
                     $result = $connection->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-
-                            $imageUrls = explode(',', $row['Image_Urls']); // Adjust the delimiter if necessary
-                            $firstImageUrl = trim($imageUrls[0]);
-        
                             echo '
                             <div class="w-full flex justify-center">
-                                <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full">
+                                <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full max-w-sm">
                                     <figure>
-                                        <img src="' . htmlspecialchars($firstImageUrl) . '" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full h-56"/>
+                                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full"/>
                                     </figure>
                                     <div class="card-body p-4">
                                         <h2 class="card-title text-lg font-semibold">' . htmlspecialchars($row['UnitType']) . ' - ' . htmlspecialchars($row['UnitNo']) . '</h2>
@@ -189,27 +166,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>';
                         }
                     } else {
-                        echo '<p class="text-gray-500">No available room units.</p>';
+                        echo '<p class="text-gray-500">No room units available.</p>';
                     }
+
                     $connection->close();
                     ?>
                 </div>
             </div>
+
+            <?php if (isset($error)): ?>
+                <div class="text-red-500 text-sm mt-8"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
+            
         </div>
     </div>
-    
+
     <script>
         function calculateTotal(unitNo) {
-            const checkin = new Date(document.getElementById('checkin-' + unitNo).value);
-            const checkout = new Date(document.getElementById('checkout-' + unitNo).value);
-            const pricePerHour = parseFloat(document.getElementById('pricePerHour-' + unitNo).innerText);
+            const checkin = document.getElementById(`checkin-${unitNo}`).value;
+            const checkout = document.getElementById(`checkout-${unitNo}`).value;
+            const pricePerHour = parseFloat(document.getElementById(`pricePerHour-${unitNo}`).innerText);
 
-            if (!isNaN(checkin) && !isNaN(checkout) && checkin < checkout) {
-                const duration = (checkout - checkin) / (1000 * 60 * 60); // Duration in hours
-                const totalAmount = duration * pricePerHour;
-                document.getElementById('totalAmount-' + unitNo).innerText = totalAmount.toFixed(2);
+            if (checkin && checkout) {
+                const checkinDate = new Date(checkin);
+                const checkoutDate = new Date(checkout);
+                const duration = (checkoutDate - checkinDate) / (1000 * 60 * 60); // Convert milliseconds to hours
+                
+                // Calculate total amount
+                const totalAmount = duration > 0 ? duration * pricePerHour : 0;
+
+                // Update the total amount display
+                document.getElementById(`totalAmount-${unitNo}`).innerText = totalAmount.toFixed(2); // Display with two decimal places
             } else {
-                document.getElementById('totalAmount-' + unitNo).innerText = '0.00';
+                document.getElementById(`totalAmount-${unitNo}`).innerText = '0.00'; // Reset if inputs are empty
             }
         }
     </script>
