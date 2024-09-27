@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
                                             <form method="POST">
                                                 <input type="hidden" name="checkout_id" value="' . htmlspecialchars($row['booking_id']) . '">
                                                 <input type="hidden" name="current_status" value="' . $checkoutToday . '">
-                                                <button type="submit" class="btn btn-primary">' . $buttonText . '</button>
+                                                <button type="submit" class="btn btn-neutral">' . $buttonText . '</button>
                                             </form>
                                           </td>';
 

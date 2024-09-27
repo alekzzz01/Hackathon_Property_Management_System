@@ -101,7 +101,7 @@ if ($connection->connect_error) {
                                                     echo '<td>' . htmlspecialchars($row['UnitType']) . '</td>';
                                                     echo '<td>' . htmlspecialchars($row['PricePerHour']) . '</td>';
                                                     echo '<td>' . htmlspecialchars($row['Description']) . '</td>';
-                                                    echo '<td><a href="unitview.php?id=' . $row['UnitNo'] . '" class="btn">View</a></td>';
+                                                    echo '<td><a href="unitview.php?id=' . $row['UnitNo'] . '" class="btn btn-neutral">View</a></td>';
                                                
                                                     echo '</tr>';
                                                 }

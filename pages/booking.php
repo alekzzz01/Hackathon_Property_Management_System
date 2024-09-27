@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p class="text-gray-700">' . htmlspecialchars($row['Description']) . '</p>
                                         <div class="card-actions">
                                             <p class="font-bold mt-3">Price per Hour: $' . htmlspecialchars($row['PricePerHour']) . '</p>
-                                            <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="mt-3 btn btn-primary cursor-pointer w-full">Book Now</label>
+                                            <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="mt-3 btn btn-neutral cursor-pointer w-full">Book Now</label>
                                         </div>
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                                         <div class="modal-action">
                                             <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="btn">Cancel</label>
-                                            <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                                            <button type="submit" class="btn btn-neutral">Confirm Booking</button>
                                         </div>
                                     </form>
                                 </div>
