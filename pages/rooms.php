@@ -61,14 +61,14 @@ if ($connection->connect_error) {
                 <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="dashboard.php">Dashboard</a></li>
-                    <li>Inventory</li>
+                    <li>Rooms</li>
                 </ul>
                 </div>
             </div>
 
            
             <div role="tablist" class="tabs tabs-lifted mt-7">
-            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Ordering" checked="checked"/>
+            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Rooms" checked="checked"/>
                                           
             <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
                                 <p></p>
@@ -121,63 +121,7 @@ if ($connection->connect_error) {
 
             </div>
 
-            <input
-                type="radio"
-                name="my_tabs_2"
-                role="tab"
-                class="tab"
-                aria-label="Catering"
-                />
-
-            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                <div class="table-container">
-                                    <table id="myTable2" class="display">
-                                        <thead id="thead">
-                                            <tr>
-                                                <th>Catering Order ID</th>
-                                                <th>Unit no.</th>
-                                                <th>Package</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Sub-Total</th>
-                                                <th>Payment Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $result = $connection->query("SELECT * FROM cateringordered");
-
-                                            if ($result->num_rows > 0) {
-                                            
-                                            while ($row = $result->fetch_assoc()) {
-                                                // Calculate subtotal
-                                                $subtotal = $row['Price'] * $row['Quantity'];
-                                        
-                                                echo '<tr>';
-                                                echo '<td>' . htmlspecialchars($row['catering_order_id']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($row['UnitNo']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($row['Package']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($row['Price']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($row['Quantity']) . '</td>';
-                                                echo '<td>' . htmlspecialchars($subtotal) . '</td>'; // Display the subtotal
-                                                echo '<td>' . htmlspecialchars($row['PaymentStatus']) . '</td>';
-                                                echo '</tr>';
-                                            }
-                                            
-                                        } else {
-                                            echo "<h2>No catering orders found.</h2>";
-                                        }
-                                        
-                                            
-                                            ?>
-                                        </tbody>
-                                    </table>
-                    </div>
-
-                    
-
-            </div>
-
+            
           
 
 

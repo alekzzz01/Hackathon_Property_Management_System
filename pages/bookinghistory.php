@@ -56,8 +56,8 @@ if ($connection->connect_error) {
         <div class="h-screen bg-base-200 px-5 py-5">
 
 
-            <div class="flex justify-between">
-                <h1 class="text-lg font-medium">Booking History</h1>
+            <div class="flex justify-end">
+              
                 <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="dashboard.php">Dashboard</a></li>
@@ -68,7 +68,7 @@ if ($connection->connect_error) {
 
            
             <div role="tablist" class="tabs tabs-lifted mt-7">
-                <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Ordering" checked="checked" />
+                <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Bookings" checked="checked" />
                                             
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
                 

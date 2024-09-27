@@ -18,6 +18,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
     
 
 
@@ -27,7 +29,7 @@
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-full bg-base-200 px-5 py-5">
+    <div class="h-auto bg-base-200 px-5 py-5">
 
         <div class="flex justify-between">
                 <h1 class="text-lg font-medium">Dashboard</h1>
@@ -91,22 +93,29 @@
 
                         <div class="rounded shadow bg-base-100 col-span-1 lg:col-span-3">
                             <div class="card-body">
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
-                                        <div>   
-                                            <p class="mb-3">Available Rooms</p>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full">
 
-                                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
-                                            </div>
+
+                                        <div class="flex flex-col gap-3">   
+                                            <p class="font-medium">Available Rooms: 5</p>
+
+                                                <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
+                                                </div>
+
+                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
                                         </div>
 
-                                        <div>   
 
-                                            <p class="mb-3">Booked Units</p>
+                                        <div class="flex flex-col gap-3">   
+
+                                            <p class="font-medium">Booked Units: 5</p>
 
                                             <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
+                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 100%">100%</div>
                                             </div>
+
+                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
 
                                         </div>
                                 </div>
@@ -154,8 +163,12 @@
                 curve: 'smooth'  // Set the stroke to 'smooth' to make it a spline chart
             },
             title: {
-                text: 'Monthly Sales Trends',
-                align: 'center'
+                text: 'Reservation Statistics',
+                align: 'center',
+                style: {
+                fontFamily: 'Inter',
+                fontWeight: 'Bold'  // Set font family to 'Inter' for the title
+            }
             },
             markers: {
                 size: 4,
@@ -168,7 +181,10 @@
                 x: {
                     format: 'MMM'
                 }
-            }
+            },
+            theme: {
+            fontFamily: 'Inter'  // Set font family to 'Inter' for the entire chart
+        }
         };
 
         // Create the chart
