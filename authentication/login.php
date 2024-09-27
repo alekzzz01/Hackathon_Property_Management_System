@@ -9,13 +9,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $connection->real_escape_string($_POST['username']);
     $password = $connection->real_escape_string($_POST['password']);
 
-    $query = "SELECT * FROM users WHERE username='$username'";
+    $query = "SELECT * FROM admintable WHERE username='$username'";
     $result = $connection->query($query);
     
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        if (password_verify($password, $user['user_password'])) {
+        if (password_verify($password, $user['Password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
 
