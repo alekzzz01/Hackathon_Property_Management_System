@@ -1,6 +1,14 @@
 <?php
 require '../session/db.php';
 
+// if (!isset($_SESSION['user_id'])) {
+//     // Redirect the user to the login page or another page as needed
+//     header("Location: ../authentication/login.php");
+//     exit();
+// }
+
+// $admin_id = $_SESSION['user_id'];
+
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
@@ -13,6 +21,34 @@ if ($checkoutCountResult->num_rows > 0) {
     $row = $checkoutCountResult->fetch_assoc();
     $checkoutCount = $row['checkout_count'];
 }
+
+$checkinCountResult = $connection->query("SELECT COUNT(booking_id) AS checkin_count FROM bookingtable");
+
+$checkinCount = 0;
+if ($checkinCountResult->num_rows > 0) {
+    $row = $checkinCountResult->fetch_assoc();
+    $checkinCount = $row['checkin_count'];
+}
+
+
+$sqlAvailable = "SELECT COUNT(*) AS roomunittable FROM roomunittable WHERE is_booked = 0";
+$resultAvailable = $connection->query($sqlAvailable);
+$availableRooms = 0;
+if ($resultAvailable->num_rows > 0) {
+    $rowAvailable = $resultAvailable->fetch_assoc();
+    $availableRooms = $rowAvailable['roomunittable'];
+}
+
+// Fetch the number of booked rooms
+$sqlBooked = "SELECT COUNT(*) AS booked_count FROM roomunittable WHERE is_booked = 1";
+$resultBooked = $connection->query($sqlBooked);
+$bookedRooms = 0;
+if ($resultBooked->num_rows > 0) {
+    $rowBooked = $resultBooked->fetch_assoc();
+    $bookedRooms = $rowBooked['booked_count'];
+}
+
+$totalRooms = $availableRooms + $bookedRooms;
 
 $connection->close();
 ?>
@@ -37,7 +73,7 @@ $connection->close();
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-auto bg-base-200 px-5 py-5">
+    <div class="h-full bg-base-200 px-5 py-5">
         <div class="flex justify-between">
             <h1 class="text-lg font-medium">Dashboard</h1>
             <div class="breadcrumbs text-sm">
@@ -67,7 +103,7 @@ $connection->close();
                 <div class="card-body">
                     <div class="flex items-start justify-between gap-2">
                         <div>
-                            <h1 class="text-4xl font-semibold mb-2">70</h1>
+                            <h1 class="text-4xl font-semibold mb-2"><?php echo $checkinCount; ?></h1>
                             <p>Check-In</p>
                         </div>
                         <button class="btn btn-square btn-sm">
@@ -95,19 +131,23 @@ $connection->close();
                 <div class="card-body">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full">
                         <div class="flex flex-col gap-3">   
-                            <p class="font-medium">Available Rooms: 5</p>
-                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
+                            <p class="font-medium">Available Rooms: <?php echo $availableRooms; ?></p>
+                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($availableRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
+                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($availableRooms / $totalRooms) * 100; ?>%">
+                                    <?php echo round(($availableRooms / $totalRooms) * 100); ?>%
+                                </div>
                             </div>
-                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+                            <p class="font-medium text-gray-400">Total Rooms: <?php echo $totalRooms; ?></p>
                         </div>
 
                         <div class="flex flex-col gap-3">   
-                            <p class="font-medium">Booked Units: 5</p>
-                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 100%">100%</div>
+                            <p class="font-medium">Booked Units: <?php echo $bookedRooms; ?></p>
+                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($bookedRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
+                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($bookedRooms / $totalRooms) * 100; ?>%">
+                                    <?php echo round(($bookedRooms / $totalRooms) * 100); ?>%
+                                </div>
                             </div>
-                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+                            <p class="font-medium text-gray-400">Total Rooms: <?php echo $totalRooms; ?></p>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,16 @@
 <?php
 require '../session/db.php'; // Include your database connection file
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    // Redirect the user to the login page or another page as needed
+    header("Location: ../authentication/login.php");
+    exit();
+}
+
+$admin_id = $_SESSION['user_id'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve data from the form
     $unitNo = $_POST['unitNo'];
@@ -9,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $contact = $_POST['contact'];
     $paidAmount = floatval($_POST['paidAmount']);
-    $adminID = $_POST['adminID'];
+
 
     // Calculate amount payable
     $pricePerHour = 0; // Initialize to hold hourly rate
@@ -39,12 +49,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $insertStmt = $connection->prepare($insertSql);
-    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $adminID);
+    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $admin_id);
 
     if ($insertStmt->execute()) {
-        // Booking successful
-        header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
-        exit();
+        $updateSql = "UPDATE roomunittable SET is_Booked = 1 WHERE UnitNo = ?";
+        $updateStmt = $connection->prepare($updateSql);
+        $updateStmt->bind_param("s", $unitNo);
+
+        if ($updateStmt->execute()) {
+            // Booking and update successful
+            header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
+            exit();
+        } else {
+            // Update failed, you may want to log or handle this error
+            $error = "Update Error: " . $updateStmt->error;
+        }
+
+        $updateStmt->close();
     } else {
         // Booking failed
         $error = "Error: " . $insertStmt->error;
@@ -87,24 +108,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="min-h-screen mt-5">
 
             <div class="w-full">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-7">
                     <?php
                     if ($connection->connect_error) {
                         die("Connection failed: " . $connection->connect_error);
                     }
 
-                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, bookingtable.AdminIdNo 
+                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Image_Urls,  bookingtable.AdminIdNo 
                     FROM roomunittable 
                     LEFT JOIN bookingtable ON roomunittable.UnitNo = bookingtable.UnitNo";
                     $result = $connection->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
+
+                            $imageUrls = explode(',', $row['Image_Urls']); // Adjust the delimiter if necessary
+                            $firstImageUrl = trim($imageUrls[0]);
+        
                             echo '
                             <div class="w-full flex justify-center">
-                                <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full max-w-sm">
+                                <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full">
                                     <figure>
-                                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full"/>
+                                        <img src="' . htmlspecialchars($firstImageUrl) . '" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full h-56"/>
                                     </figure>
                                     <div class="card-body p-4">
                                         <h2 class="card-title text-lg font-semibold">' . htmlspecialchars($row['UnitType']) . ' - ' . htmlspecialchars($row['UnitNo']) . '</h2>

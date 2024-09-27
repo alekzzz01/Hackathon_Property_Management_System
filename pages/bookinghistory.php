@@ -18,9 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     $stmt->bind_param("si", $newStatus, $checkoutId);
     
     if ($stmt->execute()) {
-        echo "Guest checkout status updated successfully.";
+       
+        $success = "Guest checkout status updated successfully.";
     } else {
-        echo "Error updating record: " . $connection->error;
+        $error =  $connection->error;
     }
     
     $stmt->close();
@@ -56,14 +57,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-screen bg-base-200 px-5 py-5">
+    <div class="h-full bg-base-200 px-5 py-5">
         <div class="flex justify-end">
+
+
             <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="dashboard.php">Dashboard</a></li>
                     <li>Booking History</li>
                 </ul>
             </div>
+
+
         </div>
 
         <div role="tablist" class="tabs tabs-lifted mt-7">
@@ -99,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
                                     echo '<td>' . htmlspecialchars($row['Name']) . '</td>';
                                     echo '<td>' . htmlspecialchars($row['ContactInfo']) . '</td>';
                                     echo '<td>' . htmlspecialchars($row['PaymentStatus']) . '</td>';
-                                    echo '<td>' . htmlspecialchars($row['AdminNo']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['AdminIdNo']) . '</td>';
                                     
                                     // Add a button to toggle the checkout status
                                     $checkoutToday = htmlspecialchars($row['checkout_today']);
@@ -122,6 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
                         </tbody>
                     </table>
                 </div>
+
+                <?php if (isset($error)): ?>
+                    <div class="bg-red-100 text-red-500 text-sm mt-8 p-3 rounded"><?php echo $error; ?></div>
+                <?php endif; ?>
+
+                <?php if (isset($success)): ?>
+                        <div class="bg-green-100 text-green-500 text-sm mt-8 p-3 rounded"><?php echo $success; ?></div>
+                <?php endif; ?>
             </div>
         </div>
 
