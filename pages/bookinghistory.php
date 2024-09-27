@@ -18,10 +18,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     $stmt->bind_param("si", $newStatus, $checkoutId);
     
     if ($stmt->execute()) {
-       
         $success = "Guest checkout status updated successfully.";
     } else {
-        $error =  $connection->error;
+        $error = $connection->error;
+    }
+    
+    $stmt->close();
+}
+
+// Handle the button click to toggle the check-in status
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
+    $checkinId = $_POST['checkin_id'];
+    $currentCheckinStatus = $_POST['current_checkin_status'];
+
+    // Determine the new check-in status
+    $newCheckinStatus = ($currentCheckinStatus === 'yes') ? 'no' : 'yes';
+
+    // Update the database with the new check-in status
+    $stmt = $connection->prepare("UPDATE bookingtable SET checkin_today = ? WHERE booking_id = ?");
+    $stmt->bind_param("si", $newCheckinStatus, $checkinId);
+    
+    if ($stmt->execute()) {
+        $success = "Guest check-in status updated successfully.";
+    } else {
+        $error = $connection->error;
     }
     
     $stmt->close();
@@ -36,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     <title>Inventory</title>
     <html data-theme="light"></html>
    
-    <link  rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
@@ -59,16 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
 
     <div class="h-full bg-base-200 px-5 py-5">
         <div class="flex justify-end">
-
-
             <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="dashboard.php">Dashboard</a></li>
                     <li>Booking History</li>
                 </ul>
             </div>
-
-
         </div>
 
         <div role="tablist" class="tabs tabs-lifted mt-7">
@@ -87,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
                                 <th>Contact Info</th>
                                 <th>Payment Status</th>
                                 <th>Admin No.</th>
-                                <th>Action</th> <!-- New column for the button -->
+                                <th>Action</th> <!-- New column for the buttons -->
                             </tr>
                         </thead>
                         <tbody>
@@ -108,13 +124,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
                                     
                                     // Add a button to toggle the checkout status
                                     $checkoutToday = htmlspecialchars($row['checkout_today']);
-                                    $buttonText = ($checkoutToday === 'yes') ? 'Mark as Not Checked Out' : 'Mark as Checked Out';
+                                    $buttonTextCheckout = ($checkoutToday === 'yes') ? 'Mark as Not Checked Out' : 'Mark as Checked Out';
+
+                                    // Add a button to toggle the checkin status
+                                    $checkinToday = htmlspecialchars($row['checkin_today']);
+                                    $buttonTextCheckin = ($checkinToday === 'yes') ? 'Mark as Not Checked In' : 'Mark as Checked In';
 
                                     echo '<td>
-                                            <form method="POST">
+                                            <form method="POST" class="inline">
                                                 <input type="hidden" name="checkout_id" value="' . htmlspecialchars($row['booking_id']) . '">
                                                 <input type="hidden" name="current_status" value="' . $checkoutToday . '">
-                                                <button type="submit" class="btn btn-neutral">' . $buttonText . '</button>
+                                                <button type="submit" class="btn btn-primary">' . $buttonText . '</button>
                                             </form>
                                           </td>';
 

@@ -1,36 +1,48 @@
 <?php
 require '../session/db.php';
 
-// if (!isset($_SESSION['user_id'])) {
-//     // Redirect the user to the login page or another page as needed
-//     header("Location: ../authentication/login.php");
-//     exit();
-// }
-
-// $admin_id = $_SESSION['user_id'];
-
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
 
-// Fetch the number of guests who checked out today
-$checkoutCountResult = $connection->query("SELECT COUNT(*) AS checkout_count FROM bookingtable WHERE checkout_today = 'yes'");
+// Handle the button click to toggle the check-in status
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
+    $checkinId = $_POST['checkin_id'];
+    $currentStatus = $_POST['current_status'];
 
-$checkoutCount = 0;
-if ($checkoutCountResult->num_rows > 0) {
-    $row = $checkoutCountResult->fetch_assoc();
-    $checkoutCount = $row['checkout_count'];
+    // Determine the new status
+    $newStatus = ($currentStatus === 'yes') ? 'no' : 'yes';
+
+    // Update the database with the new status
+    $stmt = $connection->prepare("UPDATE bookingtable SET checkin_today = ? WHERE booking_id = ?");
+    $stmt->bind_param("si", $newStatus, $checkinId);
+    
+    if ($stmt->execute()) {
+        $success = "Guest check-in status updated successfully.";
+    } else {
+        $error =  $connection->error;
+    }
+    
+    $stmt->close();
 }
 
-$checkinCountResult = $connection->query("SELECT COUNT(booking_id) AS checkin_count FROM bookingtable");
-
+// Fetch the number of guests who checked in today
+$checkinCountResult = $connection->query("SELECT COUNT(*) AS checkin_count FROM bookingtable WHERE checkin_today = 'yes'");
 $checkinCount = 0;
 if ($checkinCountResult->num_rows > 0) {
     $row = $checkinCountResult->fetch_assoc();
     $checkinCount = $row['checkin_count'];
 }
 
+// Fetch the number of guests who checked out today
+$checkoutCountResult = $connection->query("SELECT COUNT(*) AS checkout_count FROM bookingtable WHERE checkout_today = 'yes'");
+$checkoutCount = 0;
+if ($checkoutCountResult->num_rows > 0) {
+    $row = $checkoutCountResult->fetch_assoc();
+    $checkoutCount = $row['checkout_count'];
+}
 
+// Fetch the number of available rooms
 $sqlAvailable = "SELECT COUNT(*) AS roomunittable FROM roomunittable WHERE is_booked = 0";
 $resultAvailable = $connection->query($sqlAvailable);
 $availableRooms = 0;
@@ -59,10 +71,7 @@ $connection->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-
-    <html data-theme="light"></html>
-    
-    <link  rel="stylesheet" type="text/css" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
@@ -158,9 +167,6 @@ $connection->close();
                     <div id="chart"></div>  
                 </div>
             </div>
-        </div>
-
-        <div>
         </div>
 
     </div>
