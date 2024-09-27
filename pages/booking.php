@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         die("Connection failed: " . $connection->connect_error);
                     }
 
-                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Image_Urls, bookingtable.AdminIdNo 
+                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Pax, roomunittable.Image_Urls, bookingtable.AdminIdNo 
                     FROM roomunittable 
                     LEFT JOIN bookingtable ON roomunittable.UnitNo = bookingtable.UnitNo";
                     $result = $connection->query($sql);
@@ -136,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="card-body p-4">
                                         <h2 class="card-title text-lg font-semibold">' . htmlspecialchars($row['UnitType']) . ' - ' . htmlspecialchars($row['UnitNo']) . '</h2>
                                         <p class="text-gray-700">' . htmlspecialchars($row['Description']) . '</p>
+                                        <p class="text-gray-700">Maximum pax allowed: ' . htmlspecialchars($row['Pax']) . '</p>
                                         <div class="card-actions">
                                             <p class="font-bold mt-3">Price per Hour: $' . htmlspecialchars($row['PricePerHour']) . '</p>
                                             <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="mt-3 btn btn-neutral cursor-pointer w-full">Book Now</label>
