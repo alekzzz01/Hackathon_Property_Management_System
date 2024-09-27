@@ -27,9 +27,18 @@
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-full bg-base-200 px-2 py-5">
+    <div class="h-full bg-base-200 px-5 py-5">
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="flex justify-between">
+                <h1 class="text-lg font-medium">Dashboard</h1>
+                <div class="breadcrumbs text-sm">
+                <ul>
+                    <li>Dashboard</li>
+                </ul>
+                </div>
+            </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-7">
 
                         <div class="rounded shadow bg-base-100">
                                 <div class="card-body">
@@ -117,13 +126,9 @@
 
         </div>
 
-        <div>
+      <div>
             
         </div>
-
-       
-
-
 
     </div>
 
