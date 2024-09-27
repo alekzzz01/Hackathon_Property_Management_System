@@ -5,15 +5,15 @@ if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
 
-// Handle the button click to toggle the checkout status
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     $checkoutId = $_POST['checkout_id'];
     $currentStatus = $_POST['current_status'];
 
-    // Determine the new status
+
     $newStatus = ($currentStatus === 'yes') ? 'no' : 'yes';
 
-    // Update the database with the new status
+
     $stmt = $connection->prepare("UPDATE bookingtable SET checkout_today = ? WHERE booking_id = ?");
     $stmt->bind_param("si", $newStatus, $checkoutId);
     
@@ -26,15 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     $stmt->close();
 }
 
-// Handle the button click to toggle the check-in status
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
     $checkinId = $_POST['checkin_id'];
     $currentCheckinStatus = $_POST['current_checkin_status'];
 
-    // Determine the new check-in status
+
     $newCheckinStatus = ($currentCheckinStatus === 'yes') ? 'no' : 'yes';
 
-    // Update the database with the new check-in status
+
     $stmt = $connection->prepare("UPDATE bookingtable SET checkin_today = ? WHERE booking_id = ?");
     $stmt->bind_param("si", $newCheckinStatus, $checkinId);
     
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
         <div role="tablist" class="tabs tabs-lifted mt-7">
             <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Bookings" checked="checked" />
                                             
-            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 overflow-x-scroll">
                 <div class="table-container">
                     <table id="myTable" class="display">
                         <thead id="thead">
@@ -130,17 +130,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
                                     $checkinToday = htmlspecialchars($row['checkin_today']);
                                     $buttonTextCheckin = ($checkinToday === 'yes') ? 'Mark as Not Checked In' : 'Mark as Checked In';
 
-                                    echo '<td>
-                                            <form method="POST" class="inline">
-                                                <input type="hidden" name="checkout_id" value="' . htmlspecialchars($row['booking_id']) . '">
-                                                <input type="hidden" name="current_status" value="' . $checkoutToday . '">
-                                                <button type="submit" class="btn btn-primary">' . $buttonTextCheckout . '</button>
-                                            </form>
+                                    echo '<td class="flex flex-wrap gap-2">
+
                                             <form method="POST" class="inline">
                                                 <input type="hidden" name="checkin_id" value="' . htmlspecialchars($row['booking_id']) . '">
                                                 <input type="hidden" name="current_checkin_status" value="' . $checkinToday . '">
-                                                <button type="submit" class="btn btn-secondary">' . $buttonTextCheckin . '</button>
+                                                <button type="submit" class="btn btn-neutral">' . $buttonTextCheckin . '</button>
                                             </form>
+
+                                            <form method="POST" class="inline">
+                                                <input type="hidden" name="checkout_id" value="' . htmlspecialchars($row['booking_id']) . '">
+                                                <input type="hidden" name="current_status" value="' . $checkoutToday . '">
+                    
+                                                <button type="submit" class="btn btn-primary">' . $buttonTextCheckout . '</button>
+                                            </form>
+
+                                            
+
+                                           
+
                                           </td>';
 
                                     echo '</tr>';

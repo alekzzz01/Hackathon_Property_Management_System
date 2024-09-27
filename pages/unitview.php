@@ -117,7 +117,7 @@ if(isset($_GET['id'])) {
                             <div role="tabpanel" class="tab-content p-5"><p class="font-medium">Price per hour: <?php echo $unit ['PricePerHour'] ?></p></div>
 
                             <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="360 View" />
-                            <div role="tabpanel" class="tab-content p-5"><p class="font-medium"><p class="font-medium"><a class="btn" href="./unitImageView/unit360view.php?id=<?php echo $unit['UnitNo']; ?>">Click to view the 360 image of the Room</a></p>
+                            <div role="tabpanel" class="tab-content p-5"><p class="font-medium"><p class="font-medium"><a class="btn btn-neutral" href="./unitImageView/unit360view.php?id=<?php echo $unit['UnitNo']; ?>">Click to view the 360 image of the Room</a></p>
                             </div>
 
 
