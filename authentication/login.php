@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Sign in
                         </button>
                     </div>
-                    <p class="text-gray-800 text-sm !mt-8 text-center">Don't have an account? <a href="register.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register here</a></p>
+                    <p class="text-gray-800 text-sm !mt-8 text-center">Don't have an account? <a href="./signup.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register here</a></p>
                     </form>
                 </div>
                 </div>
