@@ -95,18 +95,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         die("Connection failed: " . $connection->connect_error);
                     }
 
-                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, bookingtable.AdminIdNo 
+                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Image_Urls, bookingtable.AdminIdNo 
                     FROM roomunittable 
                     LEFT JOIN bookingtable ON roomunittable.UnitNo = bookingtable.UnitNo";
                     $result = $connection->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
+
+                            $imageUrls = explode(',', $row['Image_Urls']); 
+                            $firstImageUrl = trim($imageUrls[0]); 
+
+
                             echo '
                             <div class="w-full flex justify-center">
                                 <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full max-w-sm">
                                     <figure>
-                                        <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full"/>
+                                        <img src="' . htmlspecialchars($firstImageUrl) . '" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg w-full h-60"/>
                                     </figure>
                                     <div class="card-body p-4">
                                         <h2 class="card-title text-lg font-semibold">' . htmlspecialchars($row['UnitType']) . ' - ' . htmlspecialchars($row['UnitNo']) . '</h2>
