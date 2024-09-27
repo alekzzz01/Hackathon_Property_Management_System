@@ -90,11 +90,15 @@ $connection->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <html data-theme="light"></html>
+   
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="../pages/unitImageView/images/logo.jpg" />
 </head>
 <body class="h-screen flex flex-col">
 
@@ -112,52 +116,44 @@ $connection->close();
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-7">
 
-            <div class="rounded shadow bg-base-100">
-                <div class="card-body">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <h1 class="text-4xl font-semibold mb-2">70</h1>
-                            <p>New Bookings</p>
+          <div class="flex flex-col gap-5 col-span-2 lg:col-span-1">
+
+                <div class="rounded shadow bg-base-100">
+                    <div class="card-body">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h1 class="text-4xl font-semibold mb-2"><?php echo $checkinCount; ?></h1>
+                                <p>Check-In</p>
+                            </div>
+                            <button class="btn btn-square btn-sm">
+                                <i class='bx bxs-check-square text-xl'></i>
+                            </button>
                         </div>
-                        <button class="btn btn-square btn-sm">
-                            <i class='bx bxs-book-alt text-xl'></i>
-                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div class="rounded shadow bg-base-100">
-                <div class="card-body">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <h1 class="text-4xl font-semibold mb-2"><?php echo $checkinCount; ?></h1>
-                            <p>Check-In</p>
+                
+                <div class="rounded shadow bg-base-100">
+                    <div class="card-body">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h1 class="text-4xl font-semibold mb-2"><?php echo $checkoutCount; ?></h1>
+                                <p>Check-out</p>
+                            </div>
+                            <button class="btn btn-square btn-sm">
+                                <i class='bx bxs-x-square text-xl'></i>
+                            </button>
                         </div>
-                        <button class="btn btn-square btn-sm">
-                            <i class='bx bxs-check-square text-xl'></i>
-                        </button>
                     </div>
                 </div>
+
             </div>
 
-            <div class="rounded shadow bg-base-100">
+            <div class="rounded shadow bg-base-100 col-span-2">
                 <div class="card-body">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <h1 class="text-4xl font-semibold mb-2"><?php echo $checkoutCount; ?></h1>
-                            <p>Check-out</p>
-                        </div>
-                        <button class="btn btn-square btn-sm">
-                            <i class='bx bxs-x-square text-xl'></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+                    <div class="flex flex-col gap-12">
 
-            <div class="rounded shadow bg-base-100 col-span-1 lg:col-span-3">
-                <div class="card-body">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full">
-                        <div class="flex flex-col gap-3">   
+                        <div class="flex flex-col gap-3 lg:col-span-2">   
                             <p class="font-medium">Available Rooms: <?php echo $availableRooms; ?></p>
                             <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($availableRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
                                 <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($availableRooms / $totalRooms) * 100; ?>%">
@@ -167,8 +163,8 @@ $connection->close();
                             <p class="font-medium text-gray-400">Total Rooms: <?php echo $totalRooms; ?></p>
                         </div>
 
-                        <div class="flex flex-col gap-3">   
-                            <p class="font-medium">Booked Units: <?php echo $bookedRooms; ?></p>
+                        <div class="flex flex-col gap-3 lg:col-span-2">   
+                            <p class="font-medium">Booked Rooms: <?php echo $bookedRooms; ?></p>
                             <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($bookedRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
                                 <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($bookedRooms / $totalRooms) * 100; ?>%">
                                     <?php echo round(($bookedRooms / $totalRooms) * 100); ?>%
@@ -179,6 +175,7 @@ $connection->close();
                     </div>
                 </div>
             </div>
+
 
             <div class="rounded shadow bg-base-100 col-span-1 lg:col-span-3">
                 <div class="card-body">
