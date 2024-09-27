@@ -23,10 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paidAmount = floatval($_POST['paidAmount']);
 
 
-    // Calculate amount payable
-    $pricePerHour = 0; // Initialize to hold hourly rate
 
-    // Get the price per hour for the selected unit
+    $pricePerHour = 0;
+
     $sql = "SELECT PricePerHour FROM roomunittable WHERE UnitNo = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("s", $unitNo);
@@ -35,18 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->fetch();
     $stmt->close();
 
-    // Calculate the duration in hours
+ 
     $checkinDate = new DateTime($checkin);
     $checkoutDate = new DateTime($checkout);
     $duration = $checkoutDate->diff($checkinDate)->h + ($checkoutDate->diff($checkinDate)->days * 24); // Total hours
 
-    // Calculate total amount
     $amountPayable = $duration > 0 ? $duration * $pricePerHour : 0;
 
-    // Determine payment status
+
     $paymentStatus = ($amountPayable <= $paidAmount) ? 'paid' : 'partially paid';
 
-    // Insert booking data into the booking table
+
     $insertSql = "INSERT INTO bookingtable (UnitNo, CheckIn, CheckOut, Name, ContactInfo, amount_payable, amount_paid, PaymentStatus, AdminIdNo) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
@@ -54,9 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $user_id);
 
     if ($insertStmt->execute()) {
-        // Booking successful
-        header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
-        exit();
+        $updateSql = "UPDATE roomunittable SET is_Booked = 1 WHERE UnitNo = ?";
+        $updateStmt = $connection->prepare($updateSql);
+        $updateStmt->bind_param("s", $unitNo);
+
+        if ($updateStmt->execute()) {
+            // Booking and update successful
+            header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
+            exit();
+        } else {
+            // Update failed, you may want to log or handle this error
+            $error = "Update Error: " . $updateStmt->error;
+        }
+
+        $updateStmt->close();
     } else {
         // Booking failed
         $error = "Error: " . $insertStmt->error;
@@ -64,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insertStmt->close();
 }
 
-// Display the existing room units and booking form
 ?>
 <!DOCTYPE html>
 <html lang="en">
