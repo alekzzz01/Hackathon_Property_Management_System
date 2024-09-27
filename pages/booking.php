@@ -1,6 +1,16 @@
 <?php
 require '../session/db.php'; 
 
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
 $now = date('Y-m-d\TH:i');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -11,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $contact = $_POST['contact'];
     $paidAmount = floatval($_POST['paidAmount']);
-    $adminID = $_POST['adminID'];
+
 
     // Calculate amount payable
     $pricePerHour = 0; // Initialize to hold hourly rate
@@ -41,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $insertStmt = $connection->prepare($insertSql);
-    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $adminID);
+    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $user_id);
 
     if ($insertStmt->execute()) {
         // Booking successful
