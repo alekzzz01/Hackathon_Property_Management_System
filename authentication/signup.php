@@ -7,6 +7,7 @@ session_start();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -16,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password !== $confirmPassword) {
         $error = 'Passwords do not match.';
     } else {
-        $stmt = $connection->prepare("SELECT * FROM users WHERE username = ? OR user_email = ?");
+        $stmt = $connection->prepare("SELECT * FROM admintable WHERE username = ? OR email = ?");
         $stmt->bind_param("ss", $username, $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -25,9 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Username or email already exists.';
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $connection->prepare("INSERT INTO users (username, user_email, user_password) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $email, $hashedPassword);
-
+            $stmt = $connection->prepare("INSERT INTO admintable (name, email, username, password) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $name, $email, $username, $hashedPassword);
             if ($stmt->execute()) {
                 header('Location: login.php');
                 exit();
@@ -73,10 +73,19 @@ $connection->close();
                 <div class="p-8 rounded-2xl bg-white shadow-md">
                     <h2 class="text-gray-800 text-center text-2xl font-bold">Sign up</h2>
                     <form method="POST" class="mt-8 space-y-4">
+
+                    <div>
+                        <label class="text-gray-800 text-sm mb-2 block">Name</label>
+                        <div class="relative flex items-center">
+                        <input name="name" type="name" id="name" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter name" />
+                        </div>
+                    </div>
+
+
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Email</label>
                         <div class="relative flex items-center">
-                        <input name="email" type="email" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter email" />
+                        <input name="email" type="email" id="email" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter email" />
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#bbb" stroke="#bbb" class="w-4 h-4 absolute right-4"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.7-8 5.334L4 8.7V6.297l8 5.333 8-5.333V8.7z"></path></svg>
                         </div>
                     </div>
@@ -85,7 +94,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Username</label>
                         <div class="relative flex items-center">
-                        <input name="username" type="text" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter username" />
+                        <input name="username" type="text" id="username" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter username" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" class="w-4 h-4 absolute right-4" viewBox="0 0 24 24">
                             <circle cx="10" cy="7" r="6" data-original="#000000"></circle>
                             <path d="M14 15H6a5 5 0 0 0-5 5 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 5 5 0 0 0-5-5zm8-4h-2.59l.3-.29a1 1 0 0 0-1.42-1.42l-2 2a1 1 0 0 0 0 1.42l2 2a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-.3-.29H22a1 1 0 0 0 0-2z" data-original="#000000"></path>
