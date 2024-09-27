@@ -72,11 +72,15 @@ $connection->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <html data-theme="light"></html>
+   
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="../pages/unitImageView/images/logo.jpg" />
 </head>
 <body class="h-screen flex flex-col">
 
