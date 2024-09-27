@@ -14,6 +14,25 @@ if ($checkoutCountResult->num_rows > 0) {
     $checkoutCount = $row['checkout_count'];
 }
 
+$sqlAvailable = "SELECT COUNT(*) AS roomunittable FROM roomunittable WHERE is_booked = 0";
+$resultAvailable = $connection->query($sqlAvailable);
+$availableRooms = 0;
+if ($resultAvailable->num_rows > 0) {
+    $rowAvailable = $resultAvailable->fetch_assoc();
+    $availableRooms = $rowAvailable['roomunittable'];
+}
+
+
+$sqlBooked = "SELECT COUNT(*) AS booked_count FROM roomunittable WHERE is_booked = 1";
+$resultBooked = $connection->query($sqlBooked);
+$bookedRooms = 0;
+if ($resultBooked->num_rows > 0) {
+    $rowBooked = $resultBooked->fetch_assoc();
+    $bookedRooms = $rowBooked['booked_count'];
+}
+
+$totalRooms = $availableRooms + $bookedRooms;
+
 $connection->close();
 ?>
 
@@ -37,7 +56,7 @@ $connection->close();
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-auto bg-base-200 px-5 py-5">
+    <div class="h-full bg-base-200 px-5 py-5">
 
         <div class="flex justify-between">
             <h1 class="text-lg font-medium">Dashboard</h1>
@@ -98,25 +117,32 @@ $connection->close();
 
 
                                         <div class="flex flex-col gap-3">   
-                                            <p class="font-medium">Available Rooms: 5</p>
+                                            <p class="font-medium">Available: <?php echo $availableRooms ?></p>
 
-                                                <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                                    <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
+                                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($availableRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($availableRooms / $totalRooms) * 100; ?>%">
+                                                    <?php echo round(($availableRooms / $totalRooms) * 100); ?>%
                                                 </div>
+                                            </div>
 
-                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+
+
+                                            <p class="font-regular text-gray-400">Total Rooms: <?php echo $totalRooms; ?></p>
                                         </div>
 
 
                                         <div class="flex flex-col gap-3">   
 
-                                            <p class="font-medium">Booked Units: 5</p>
+                                            <p class="font-medium">Booked: <?php echo $bookedRooms ?></p>
 
-                                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 100%">100%</div>
+                                            <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($bookedRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($bookedRooms / $totalRooms) * 100; ?>%">
+                                                    <?php echo round(($bookedRooms / $totalRooms) * 100); ?>%
+                                                </div>
                                             </div>
 
-                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+
+                                            <p class="font-regular text-gray-400">Total Rooms:  <?php echo $totalRooms; ?></p>
 
                                         </div>
                                 </div>
