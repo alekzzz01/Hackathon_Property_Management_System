@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Room Units</title>
+    <html data-theme="light"></html>
 
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,15 +14,26 @@
 </head>
 <body>
 
-    <?php include 'pages/navbar.php'; ?>
+    <?php include 'navbar.php'; ?>
 
-    <div class="bg-gray-50 font-[sans-serif]">
-        <div class="min-h-screen flex flex-col items-center justify-center py-6 px-4">
-            <div class="max-w-6xl w-full">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
+    <div class="bg-base-200 px-5 py-5">
+
+        <div class="flex justify-between">
+                <h1 class="text-lg font-medium">Booking</h1>
+                <div class="breadcrumbs text-sm">
+                <ul>
+                    <li><a href="dashboard.php">Dashboard</a></li>
+                    <li>Booking</li>
+                </ul>
+                </div>
+        </div>
+
+        <div class="min-h-screen mt-5">
+
+            <div class="w-full">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
                     <?php
-                    require './session/db.php';
+                   require '../session/db.php';
 
                     if ($connection->connect_error) {
                         die("Connection failed: " . $connection->connect_error);
@@ -32,20 +44,18 @@
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            // Start a separate div for each card
+                           
                             echo '<div class="w-full flex justify-center">'; // New outer div to center the card
-                            echo '    <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full max-w-xs">'; // Card styling
+                            echo '    <div class="card bg-base-100 shadow-lg rounded-lg overflow-hidden w-full">'; // Card styling
                             echo '        <figure>';
                             echo '            <img src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" alt="' . htmlspecialchars($row['UnitType']) . '" class="rounded-t-lg"/>';
                             echo '        </figure>';
                             echo '        <div class="card-body p-4">'; // Add padding to the card body
                             echo '            <h2 class="card-title text-lg font-semibold">' . htmlspecialchars($row['UnitType']) . ' - ' . htmlspecialchars($row['UnitNo']) . '</h2>';
                             echo '            <p class="text-gray-700">' . htmlspecialchars($row['Description']) . '</p>';
-                            echo '            <p class="font-bold">Price per Hour: $' . htmlspecialchars($row['PricePerHour']) . '</p>';
-                            echo '            <div class="card-actions justify-end">';
-
-                            // Button to trigger the DaisyUI modal
-                            echo '                <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="btn btn-primary cursor-pointer">Book Now</label>';
+                            echo '            <div class="card-actions">';
+                            echo '                  <p class="font-bold mt-3">Price per Hour: $' . htmlspecialchars($row['PricePerHour']) . '</p>';
+                            echo '                <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="mt-3 btn btn-primary cursor-pointer w-full">Book Now</label>';
                             echo '            </div>';
                             echo '        </div>';
                             echo '    </div>';

@@ -19,8 +19,9 @@
         tabindex="0"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[10] mt-3 w-52 p-2 shadow">
         <li><a href="dashboard.php">Dashboard</a></li>
-        <li><a href="rooms.php">Rooms</a></li>
-        <li><a href="bookinghistory.php">Bookings</a></li>
+        <li><a href="booking.php">Booking</a></li>
+        <li><a href="bookinghistory.php">History</a></li>
+        <li><a href="rooms.php">Unit and Rooms</a></li>
         <li><a href="inventory.php">Inventory</a></li>
       </ul>
     </div>
