@@ -1,5 +1,7 @@
 <?php
-require '../session/db.php'; // Include your database connection file
+require '../session/db.php'; 
+
+$now = date('Y-m-d\TH:i');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve data from the form
@@ -147,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             
                                         <div class="mb-4">
                                             <label for="checkin" class="block mb-2">Check In:</label>
-                                            <input type="datetime-local" id="checkin-' . htmlspecialchars($row['UnitNo']) . '" name="checkin" required class="border border-gray-300 p-2 rounded w-full" onchange="calculateTotal(\'' . htmlspecialchars($row['UnitNo']) . '\')">
+                                            <input type="datetime-local" id="checkin-' . htmlspecialchars($row['UnitNo']) . '" name="checkin"  required class="border border-gray-300 p-2 rounded w-full"  onchange="calculateTotal(\'' . htmlspecialchars($row['UnitNo']) . '\')">
                                         </div>
                             
                                         <div class="mb-4">
@@ -207,6 +209,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     </script>
+
+    <script>
+    // JavaScript to set the minimum date for Check In and Check Out to the current date and time
+    document.addEventListener("DOMContentLoaded", function() {
+        var checkInInputs = document.querySelectorAll("[id^='checkin-']");
+        var checkOutInputs = document.querySelectorAll("[id^='checkout-']");
+        
+        var currentDateTime = new Date().toISOString().slice(0,16); // Get current date and time in 'YYYY-MM-DDTHH:MM' format
+
+        checkInInputs.forEach(function(input) {
+            input.setAttribute("min", currentDateTime); // Set min attribute to the current date and time
+        });
+
+        checkOutInputs.forEach(function(input) {
+            input.setAttribute("min", currentDateTime); // Set min attribute to the current date and time
+        });
+    });
+    </script>
+
 
 </body>
 </html>
