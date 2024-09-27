@@ -68,7 +68,7 @@ if ($connection->connect_error) {
 
            
             <div role="tablist" class="tabs tabs-lifted mt-7">
-            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Rooms" checked="checked"/>
+            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="All Unit and Rooms" checked="checked"/>
                                           
             <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
                                 <p></p>
@@ -77,35 +77,33 @@ if ($connection->connect_error) {
                                     <table id="myTable" class="display">
                                         <thead id="thead">
                                             <tr>
-                                                <th>Order ID</th>
-                                                <th>Unit no.</th>
-                                                <th>Item</th>
-                                                <th>Type</th>
-                                                <th>Price</th>
-                                                <th>Quantity</th>
-                                                <th>Sub-Total</th>
-                                                <th>Payment Status</th>
+                                                <th>Unit No.</th>
+                                                <th>Unit Type</th>
+                                                <th>Price per Hour</th>
+                                                <th>Description</th>
+                                        
+                                                <th>Action</th>
+                                               
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $result = $connection->query("SELECT * FROM itemsordered");
+                                            $result = $connection->query("SELECT * FROM roomunittable");
 
                                             if ($result->num_rows > 0) {
                             
                                                 while ($row = $result->fetch_assoc()) {
-                                                    // Calculate subtotal
-                                                    $subtotal = $row['Price'] * $row['Quantity'];
-                                            
+                                                   
+                
                                                     echo '<tr>';
-                                                    echo '<td>' . htmlspecialchars($row['order_id']) . '</td>';
                                                     echo '<td>' . htmlspecialchars($row['UnitNo']) . '</td>';
-                                                    echo '<td>' . htmlspecialchars($row['Item']) . '</td>';
-                                                    echo '<td>' . htmlspecialchars($row['Type']) . '</td>';
-                                                    echo '<td>' . htmlspecialchars($row['Price']) . '</td>';
-                                                    echo '<td>' . htmlspecialchars($row['Quantity']) . '</td>';
-                                                    echo '<td>' . htmlspecialchars($subtotal) . '</td>'; // Display the subtotal
-                                                    echo '<td>' . htmlspecialchars($row['PaymentStatus']) . '</td>';
+                                                    echo '<td>' . htmlspecialchars($row['UnitType']) . '</td>';
+                                                    echo '<td>' . htmlspecialchars($row['PricePerHour']) . '</td>';
+                                                    echo '<td>' . htmlspecialchars($row['Description']) . '</td>';
+                                               
+                                                    echo '<td><a href="unitview.php?id=' . $row['UnitNo'] . '" class="btn">View</a></td>';
+
+                                                   
                                                     echo '</tr>';
                                                 }
                                             

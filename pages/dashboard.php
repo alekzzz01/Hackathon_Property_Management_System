@@ -29,7 +29,7 @@
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-auto bg-base-200 px-5 py-5">
+    <div class="h-full bg-base-200 px-5 py-5">
 
         <div class="flex justify-between">
                 <h1 class="text-lg font-medium">Dashboard</h1>
@@ -103,7 +103,7 @@
                                                     <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 25%">25%</div>
                                                 </div>
 
-                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+                                            <p class="font-regular text-gray-400">Total Rooms: 20</p>
                                         </div>
 
 
@@ -115,7 +115,7 @@
                                                 <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: 100%">100%</div>
                                             </div>
 
-                                            <p class="font-medium text-gray-400">Total Rooms: 20</p>
+                                            <p class="font-regular text-gray-400">Total Rooms: 20</p>
 
                                         </div>
                                 </div>

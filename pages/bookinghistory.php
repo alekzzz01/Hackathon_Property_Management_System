@@ -84,6 +84,7 @@ if ($connection->connect_error) {
                                                     <th>Contact Info</th>
                                                     <th>Payment Status</th>
                                                     <th>Admin No.</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -103,7 +104,8 @@ if ($connection->connect_error) {
                                                         echo '<td>' . htmlspecialchars($row['Name']) . '</td>';
                                                         echo '<td>' . htmlspecialchars($row['ContactInfo']) . '</td>';
                                                         echo '<td>' . htmlspecialchars($row['PaymentStatus']) . '</td>';
-                                                        echo '<td>' . htmlspecialchars($row['AdminNo']) . '</td>';
+                                                        echo '<td>' . htmlspecialchars($row['AdminIdNo']) . '</td>';
+                                                        echo '<td><button class="btn" onclick="showOrderModal(\'' . htmlspecialchars($row['UnitNo']) . '\')">Order Food</button></td>';
                                                         echo '</tr>';
                                                     }
                                                 
