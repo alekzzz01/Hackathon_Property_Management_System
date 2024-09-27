@@ -15,7 +15,7 @@ if ($connection->connect_error) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
+    <title>Room and Units</title>
     <html data-theme="light"></html>
    
     <link  rel="stylesheet" type="text/css" href="styles.css" />
@@ -68,10 +68,10 @@ if ($connection->connect_error) {
 
            
             <div role="tablist" class="tabs tabs-lifted mt-7">
-            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="All Unit and Rooms" checked="checked"/>
+            <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="All" checked="checked"/>
                                           
-            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                                <p></p>
+            <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6 overflow-x-scroll" >
+                               
                             
                                 <div class="table-container">
                                     <table id="myTable" class="display">

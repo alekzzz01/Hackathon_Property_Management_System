@@ -10,22 +10,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout_id'])) {
     $checkoutId = $_POST['checkout_id'];
     $currentStatus = $_POST['current_status'];
 
-
+    // Toggle the checkout status
     $newStatus = ($currentStatus === 'yes') ? 'no' : 'yes';
 
-
+    // Prepare the statement to update checkout status
     $stmt = $connection->prepare("UPDATE bookingtable SET checkout_today = ? WHERE booking_id = ?");
     $stmt->bind_param("si", $newStatus, $checkoutId);
-    
+
+    // Execute the query
     if ($stmt->execute()) {
-        $success = "Guest checkout status updated successfully.";
+        // Get the UnitNo for the current booking
+        $unitResult = $connection->query("SELECT UnitNo FROM bookingtable WHERE booking_id = $checkoutId");
+        if ($unitResult->num_rows > 0) {
+            $unitRow = $unitResult->fetch_assoc();
+            $unitNo = $unitRow['UnitNo'];
+
+            // Update the room's is_Booked status to 0 (available) if the guest checks out
+            if ($newStatus === 'yes') {
+                $updateRoomStatus = "UPDATE roomunittable SET is_Booked = 0 WHERE UnitNo = ?";
+                $updateStmt = $connection->prepare($updateRoomStatus);
+                $updateStmt->bind_param("s", $unitNo);
+
+                if ($updateStmt->execute()) {
+                    $success = "Guest checkout status and room availability updated successfully.";
+                } else {
+                    $error = "Error updating room status: " . $updateStmt->error;
+                }
+
+                $updateStmt->close();
+            }
+        } else {
+            $error = "Error fetching unit information.";
+        }
     } else {
         $error = $connection->error;
     }
-    
+
     $stmt->close();
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
     $checkinId = $_POST['checkin_id'];
@@ -53,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory</title>
+    <title>Booking History</title>
     <html data-theme="light"></html>
    
     <link rel="stylesheet" type="text/css" href="styles.css" />
@@ -102,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
                                 <th>Guest Name</th>
                                 <th>Contact Info</th>
                                 <th>Payment Status</th>
+                                <th>Balance</th>
                                 <th>Admin No.</th>
                                 <th>Action</th> <!-- New column for the buttons -->
                             </tr>
@@ -120,36 +143,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
                                     echo '<td>' . htmlspecialchars($row['Name']) . '</td>';
                                     echo '<td>' . htmlspecialchars($row['ContactInfo']) . '</td>';
                                     echo '<td>' . htmlspecialchars($row['PaymentStatus']) . '</td>';
+                                    echo '<td>' . htmlspecialchars($row['Balance']) . '</td>';
                                     echo '<td>' . htmlspecialchars($row['AdminIdNo']) . '</td>';
                                     
-                                    // Add a button to toggle the checkout status
+                               
                                     $checkoutToday = htmlspecialchars($row['checkout_today']);
                                     $buttonTextCheckout = ($checkoutToday === 'yes') ? 'Mark as Not Checked Out' : 'Mark as Checked Out';
+                                    $checkoutDisabled = ($checkoutToday === 'yes') ? 'disabled' : ''; // Disable button if already checked out
 
                                     // Add a button to toggle the checkin status
                                     $checkinToday = htmlspecialchars($row['checkin_today']);
                                     $buttonTextCheckin = ($checkinToday === 'yes') ? 'Mark as Not Checked In' : 'Mark as Checked In';
+                                    $checkinDisabled = ($checkinToday === 'yes') ? 'disabled' : ''; // Disable button if already checked in
 
                                     echo '<td class="flex flex-wrap gap-2">
 
                                             <form method="POST" class="inline">
                                                 <input type="hidden" name="checkin_id" value="' . htmlspecialchars($row['booking_id']) . '">
                                                 <input type="hidden" name="current_checkin_status" value="' . $checkinToday . '">
-                                                <button type="submit" class="btn btn-neutral">' . $buttonTextCheckin . '</button>
+                                                <button type="submit" class="btn btn-outline" ' . $checkinDisabled . '>' . $buttonTextCheckin . '</button>
                                             </form>
 
                                             <form method="POST" class="inline">
                                                 <input type="hidden" name="checkout_id" value="' . htmlspecialchars($row['booking_id']) . '">
                                                 <input type="hidden" name="current_status" value="' . $checkoutToday . '">
-                    
-                                                <button type="submit" class="btn btn-primary">' . $buttonTextCheckout . '</button>
+                                                <button type="submit" class="btn btn-neutral" ' . $checkoutDisabled . '>' . $buttonTextCheckout . '</button>
                                             </form>
 
-                                            
+                                        </td>';
 
-                                           
-
-                                          </td>';
 
                                     echo '</tr>';
                                 }
@@ -168,6 +190,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkin_id'])) {
                 <?php if (isset($success)): ?>
                         <div class="bg-green-100 text-green-500 text-sm mt-8 p-3 rounded"><?php echo $success; ?></div>
                 <?php endif; ?>
+
+
+
             </div>
         </div>
 

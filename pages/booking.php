@@ -44,12 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $paymentStatus = ($amountPayable <= $paidAmount) ? 'paid' : 'partially paid';
 
+    // Calculate the remaining balance
+    $balance = $amountPayable - $paidAmount;
 
-    $insertSql = "INSERT INTO bookingtable (UnitNo, CheckIn, CheckOut, Name, ContactInfo, amount_payable, amount_paid, PaymentStatus, AdminIdNo) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $insertSql = "INSERT INTO bookingtable (UnitNo, CheckIn, CheckOut, Name, ContactInfo, amount_payable, amount_paid, PaymentStatus, AdminIdNo, Balance) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     $insertStmt = $connection->prepare($insertSql);
-    $insertStmt->bind_param("ssssddssi", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $user_id);
+    $insertStmt->bind_param("ssssddssii", $unitNo, $checkin, $checkout, $name, $contact, $amountPayable, $paidAmount, $paymentStatus, $user_id,  $balance);
 
     if ($insertStmt->execute()) {
         $updateSql = "UPDATE roomunittable SET is_Booked = 1 WHERE UnitNo = ?";
@@ -58,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($updateStmt->execute()) {
             // Booking and update successful
-            header("Location: dashboard.php?success=Booking confirmed!"); // Redirect back to dashboard or any other page
-            exit();
+            $success = "Booking Confirmed.";
+          
         } else {
             // Update failed, you may want to log or handle this error
             $error = "Update Error: " . $updateStmt->error;
@@ -94,6 +97,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="bg-base-200 px-5 py-5">
 
+    
+   
+        <?php if (isset($error)): ?>
+                    <div class="bg-red-100 text-red-500 text-sm p-3 rounded"><?php echo $error; ?></div>
+        <?php endif; ?>
+
+        <?php if (isset($success)): ?>
+                        <div class="bg-green-100 text-green-500 text-sm p-3 rounded"><?php echo $success; ?></div>
+        <?php endif; ?>
+
+
         <div class="flex justify-between">
                 <h1 class="text-lg font-medium">Booking</h1>
                 <div class="breadcrumbs text-sm">
@@ -104,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
         </div>
 
+  
         <div class="min-h-screen mt-5">
 
             <div class="w-full">
@@ -115,10 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         die("Connection failed: " . $connection->connect_error);
                     }
 
-                    $sql = "SELECT roomunittable.UnitNo, roomunittable.UnitType, roomunittable.PricePerHour, roomunittable.Description, roomunittable.Pax, roomunittable.Image_Urls, bookingtable.AdminIdNo 
-                    FROM roomunittable 
-                    LEFT JOIN bookingtable ON roomunittable.UnitNo = bookingtable.UnitNo";
-                    $result = $connection->query($sql);
+                    $result = $connection->query("SELECT * FROM roomunittable");
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -152,8 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <form method="POST" action="">
                                         <input type="hidden" name="unitNo" value="' . htmlspecialchars($row['UnitNo']) . '">
                                         <input type="hidden" name="unitType" value="' . htmlspecialchars($row['UnitType']) . '">
-                                        <input type="hidden" name="adminID" value="' . htmlspecialchars($row['AdminIdNo']) . '"> <!-- Admin ID field -->
-                                        
+                                     
+                                    
                                         <p class="font-bold">Price per Hour: $<span id="pricePerHour-' . htmlspecialchars($row['UnitNo']) . '">' . htmlspecialchars($row['PricePerHour']) . '</span></p>
                                         
                                         <div class="mb-4">
@@ -200,10 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <?php if (isset($error)): ?>
-                <div class="text-red-500 text-sm mt-8"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-            
+        
         </div>
     </div>
 
