@@ -62,7 +62,25 @@ if ($resultBooked->num_rows > 0) {
 
 $totalRooms = $availableRooms + $bookedRooms;
 
+// Fetch the total number of guests per month
+$guestsPerMonth = [];
+for ($i = 1; $i <= 12; $i++) {
+    $sqlGuests = "SELECT COUNT(*) AS guest_count FROM bookingtable WHERE MONTH(CheckIn) = $i";
+    $resultGuests = $connection->query($sqlGuests);
+    
+    $guestCount = 0;
+    if ($resultGuests->num_rows > 0) {
+        $rowGuests = $resultGuests->fetch_assoc();
+        $guestCount = $rowGuests['guest_count'];
+    }
+    $guestsPerMonth[] = $guestCount;
+}
+
+$totalRooms = $availableRooms + $bookedRooms;
+
 $connection->close();
+
+
 ?>
 
 <!DOCTYPE html>
@@ -178,24 +196,24 @@ $connection->close();
 </body>
 
 <script>
-    // Create the chart options
-    var options = {
+       // Create the chart options
+       var options = {
         chart: {
             type: 'line',
             height: 350
         },
         series: [{
-            name: 'Sales',
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+            name: 'Total Guests',
+            data: <?php echo json_encode($guestsPerMonth); ?>
         }],
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
         stroke: {
             curve: 'smooth'
         },
         title: {
-            text: 'Reservation Statistics',
+            text: 'Reservation Analytics',
             align: 'center',
             style: {
                 fontFamily: 'Inter',
@@ -227,3 +245,4 @@ $connection->close();
 </script>
 
 </html>
+
