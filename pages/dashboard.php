@@ -100,11 +100,11 @@ $connection->close();
 
     <link rel="icon" href="../pages/unitImageView/images/logo.jpg" />
 </head>
-<body class="h-screen flex flex-col">
+<body class="h-fit bg-base-200 flex flex-col">
 
     <?php include 'navbar.php' ?>
 
-    <div class="h-full bg-base-200 px-5 py-5">
+    <div class="h-full px-5 py-5">
         <div class="flex justify-between">
             <h1 class="text-lg font-medium">Dashboard</h1>
             <div class="breadcrumbs text-sm">
@@ -156,7 +156,7 @@ $connection->close();
                         <div class="flex flex-col gap-3 lg:col-span-2">   
                             <p class="font-medium">Available Rooms: <?php echo $availableRooms; ?></p>
                             <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($availableRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
-                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($availableRooms / $totalRooms) * 100; ?>%">
+                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-yellow-600 text-xs text-white text-center whitespace-nowrap dark:bg-yellow-500 transition duration-500" style="width: <?php echo ($availableRooms / $totalRooms) * 100; ?>%">
                                     <?php echo round(($availableRooms / $totalRooms) * 100); ?>%
                                 </div>
                             </div>
@@ -166,7 +166,7 @@ $connection->close();
                         <div class="flex flex-col gap-3 lg:col-span-2">   
                             <p class="font-medium">Booked Rooms: <?php echo $bookedRooms; ?></p>
                             <div class="flex w-full h-4 bg-gray-200 rounded-full overflow-hidden dark:bg-neutral-700" role="progressbar" aria-valuenow="<?php echo ($bookedRooms / $totalRooms) * 100; ?>" aria-valuemin="0" aria-valuemax="100">
-                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-blue-600 text-xs text-white text-center whitespace-nowrap dark:bg-blue-500 transition duration-500" style="width: <?php echo ($bookedRooms / $totalRooms) * 100; ?>%">
+                                <div class="flex flex-col justify-center rounded-full overflow-hidden bg-yellow-600 text-xs text-white text-center whitespace-nowrap dark:bg-yellow-500 transition duration-500" style="width: <?php echo ($bookedRooms / $totalRooms) * 100; ?>%">
                                     <?php echo round(($bookedRooms / $totalRooms) * 100); ?>%
                                 </div>
                             </div>
@@ -189,7 +189,7 @@ $connection->close();
 </body>
 
 <script>
-       // Create the chart options
+       
        var options = {
         chart: {
             type: 'line',
@@ -199,6 +199,7 @@ $connection->close();
             name: 'Total Guests',
             data: <?php echo json_encode($guestsPerMonth); ?>
         }],
+        colors: ['#F6D6A5'], 
         xaxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

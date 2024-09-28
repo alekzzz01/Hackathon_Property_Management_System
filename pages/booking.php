@@ -11,7 +11,45 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-$now = date('Y-m-d\TH:i');
+date_default_timezone_set('Asia/Manila');
+$now = date('Y-m-d H:i:s');
+
+$bookedUnits = [];
+
+$sql = "SELECT UnitNo, CheckIn, CheckOut, checkout_today FROM bookingtable";
+$result = $connection->query($sql);
+
+if (!$result) {
+    // Display error if the query fails
+    echo "Error fetching data: " . $connection->error;
+}
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+       
+        $checkin = new DateTime($row['CheckIn']);
+        $checkout = new DateTime($row['CheckOut']);
+        $now = new DateTime();
+        
+     
+
+        $checkin = new DateTime($row['CheckIn']);
+        $checkout = new DateTime($row['CheckOut']);
+        $now = new DateTime();
+
+        // Check if the unit is booked based on the current date
+        if ($now >= $checkin && $now <= $checkout && $row['checkout_today'] === 'no') {
+            $bookedUnits[] = $row['UnitNo']; // Add to booked units only if checkout_today is 'no'
+        }
+    }
+
+       
+} else {
+    echo "No bookings found."; // Debugging: In case no bookings are found
+}
+
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve data from the form
@@ -60,12 +98,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->bind_param("s", $unitNo);
 
         if ($updateStmt->execute()) {
-            // Booking and update successful
-            $success = "Booking Confirmed.";
-          
+            header("Location: booking.php?success=1");
+            exit();
         } else {
-            // Update failed, you may want to log or handle this error
-            $error = "Update Error: " . $updateStmt->error;
+           
+            header("Location: booking.php?error=update_failed");
+            exit();
         }
 
         $updateStmt->close();
@@ -98,13 +136,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="bg-base-200 px-5 py-5">
 
     
-   
-        <?php if (isset($error)): ?>
-                    <div class="bg-red-100 text-red-500 text-sm p-3 rounded"><?php echo $error; ?></div>
-        <?php endif; ?>
-
-        <?php if (isset($success)): ?>
-                        <div class="bg-green-100 text-green-500 text-sm p-3 rounded"><?php echo $success; ?></div>
+        <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+            <div id="success-message" class="bg-green-100 text-green-500 text-sm p-3 rounded">Booking Confirmed.</div>
+        <?php elseif (isset($_GET['error'])): ?>
+            <div id="error-message" class="bg-red-100 text-red-500 text-sm p-3 rounded">
+                <?php 
+                    if ($_GET['error'] == 'update_failed') {
+                        echo "Update Error: Failed to update room status.";
+                    } elseif ($_GET['error'] == 'booking_failed') {
+                        echo "Booking Error: Failed to create booking.";
+                    }
+                ?>
+            </div>
         <?php endif; ?>
 
 
@@ -122,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="min-h-screen mt-5">
 
             <div class="w-full">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-7">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-7">
                     <?php
                    require '../session/db.php';
 
@@ -134,6 +177,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
+
+                            $unitNo = $row['UnitNo'];
+                            $isBooked = in_array($unitNo, $bookedUnits);
+
+                        // debug for booked units
+                            // echo '<pre>';
+                            // print_r($bookedUnits);
+                            // echo '</pre>';
+                            
+                    // current time check in time check out time
+                            // echo "Now: " . $now->format('Y-m-d H:i:s') . "<br>";
+                            // echo "CheckIn: " . $checkin->format('Y-m-d H:i:s') . "<br>";
+                            // echo "CheckOut: " . $checkout->format('Y-m-d H:i:s') . "<br>";
+
+                    // showing if a unit is booked or no
+                            // echo '<pre>';
+                            // echo 'Unit No: ' . $unitNo . ', Is Booked: ' . ($isBooked ? 'Yes' : 'No') . '<br>';
+                            // echo '</pre>';
+
+
+                      
+
 
                             $imageUrls = explode(',', $row['Image_Urls']); 
                             $firstImageUrl = trim($imageUrls[0]); 
@@ -151,7 +216,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p class="text-gray-700">Maximum pax allowed: ' . htmlspecialchars($row['Pax']) . '</p>
                                         <div class="card-actions">
                                             <p class="font-bold mt-3">Price per Hour: $' . htmlspecialchars($row['PricePerHour']) . '</p>
-                                            <label for="bookingModal-' . htmlspecialchars($row['UnitNo']) . '" class="mt-3 btn btn-neutral cursor-pointer w-full">Book Now</label>
+                                               <label for="bookingModal-' . $unitNo . '" 
+                                                    class="mt-3 btn ' . ($isBooked ? 'btn-disabled' : 'btn-neutral') . ' cursor-pointer w-full" 
+                                                    ' . ($isBooked ? 'disabled' : '') . '>
+                                                    ' . ($isBooked ? 'Booked' : 'Book Now') . '
+                                                </label>
+
                                         </div>
                                     </div>
                                 </div>
@@ -216,6 +286,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+   
+
     <script>
         function calculateTotal(unitNo) {
             const checkin = document.getElementById(`checkin-${unitNo}`).value;
@@ -256,6 +328,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
     </script>
 
+<script>
+        // Check if 'success' query parameter exists
+        if (window.location.search.includes('success=1')) {
+            // After displaying the message, remove 'success' parameter from the URL
+            var url = new URL(window.location);
+            url.searchParams.delete('success');
+            window.history.replaceState({}, '', url);
+        }
+    </script>
 
-</body>
+
+
 </html>

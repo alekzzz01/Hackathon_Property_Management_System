@@ -77,7 +77,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Name</label>
                         <div class="relative flex items-center">
-                        <input name="name" type="name" id="name" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter name" />
+                        <input name="name" type="name" id="name" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-yellow-600" placeholder="Enter name" />
                         </div>
                     </div>
 
@@ -85,7 +85,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Email</label>
                         <div class="relative flex items-center">
-                        <input name="email" type="email" id="email" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter email" />
+                        <input name="email" type="email" id="email" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-yellow-600" placeholder="Enter email" />
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#bbb" stroke="#bbb" class="w-4 h-4 absolute right-4"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.7-8 5.334L4 8.7V6.297l8 5.333 8-5.333V8.7z"></path></svg>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Username</label>
                         <div class="relative flex items-center">
-                        <input name="username" type="text" id="username" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter username" />
+                        <input name="username" type="text" id="username" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-yellow-600" placeholder="Enter username" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="#bbb" stroke="#bbb" class="w-4 h-4 absolute right-4" viewBox="0 0 24 24">
                             <circle cx="10" cy="7" r="6" data-original="#000000"></circle>
                             <path d="M14 15H6a5 5 0 0 0-5 5 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 5 5 0 0 0-5-5zm8-4h-2.59l.3-.29a1 1 0 0 0-1.42-1.42l-2 2a1 1 0 0 0 0 1.42l2 2a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42l-.3-.29H22a1 1 0 0 0 0-2z" data-original="#000000"></path>
@@ -105,7 +105,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Password</label>
                         <div class="relative flex items-center">
-                        <input type="password" id="password" x-model="password" name="password" @input="checkStrength" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter password" />
+                        <input type="password" id="password" x-model="password" name="password" @input="checkStrength" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-yellow-600" placeholder="Enter password" />
                             <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
                                 <i id="togglePasswordIcon" class='bx bxs-show w-4 h-4 text-gray-400'></i>
                             </button>
@@ -127,7 +127,7 @@ $connection->close();
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Confirm Password</label>
                         <div class="relative flex items-center">
-                            <input id="confirmPassword" name="confirmPassword" type="password" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600" placeholder="Enter password" />
+                            <input id="confirmPassword" name="confirmPassword" type="password" required class="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-yellow-600" placeholder="Enter password" />
                             <button type="button" onclick="togglePassword('confirmPassword', 'toggleConfirmPasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
                                 <i id="toggleConfirmPasswordIcon" class='bx bxs-show w-4 h-4 text-gray-400'></i>
                             </button>
@@ -142,16 +142,16 @@ $connection->close();
                     <div class="flex">
                         <input type="checkbox" x-model="termsAccepted" class="w-4" />
                         <label class="text-sm ml-2 text-gray-500">I have read and accept the <a href="javascript:void(0)"
-                            class="text-sm text-blue-600 hover:underline">Terms and Conditions</a></label>
+                            class="text-sm text-yellow-600 hover:underline">Terms and Conditions</a></label>
                     </div>
 
                     <div class="!mt-8">
-                        <button type="submit" :disabled="!isFormValid" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                        <button type="submit" :disabled="!isFormValid" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none">
                             Sign up
                         </button>
                     </div>
 
-                    <p class="text-gray-800 text-sm !mt-8 text-center">Already have an account? <a href="login.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Login here</a></p>
+                    <p class="text-gray-800 text-sm !mt-8 text-center">Already have an account? <a href="login.php" class="text-yellow-600 hover:underline ml-1 whitespace-nowrap font-semibold">Login here</a></p>
                     
                 </form>
                 </div>

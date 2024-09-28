@@ -1,0 +1,21 @@
+.section {
+    position: relative;
+    background-image: url(https://scontent.fmnl33-2.fna.fbcdn.net/v/t39.30808-6/361578138_738939794911915_316263766979253374_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeE8JvTRFxZTPUOi86awAokxCprraLiMtfkKmutouIy1-WHbKqEhWwd6htgigHjOWLqYExAJoYJH7-E-rWGm2e2k&_nc_ohc=SW5OEjg8m_8Q7kNvgGrH4dg&_nc_ht=scontent.fmnl33-2.fna&_nc_gid=A-QfToKyVfA7L-BBhORS6Ze&oh=00_AYA9Jj9n3Q2YEwZzi_r23CKqj_moS7WnMCoP1v_UeoAuRQ&oe=66FD5F7D);
+    background-size: cover;
+}
+
+.section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Adjust the opacity (0.0 to 1.0) */
+    z-index: 1; /* Position it above the background image */
+}
+
+.section > * {
+    position: relative; /* Position child elements above the overlay */
+    z-index: 2;
+}
